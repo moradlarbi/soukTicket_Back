@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_tickets_tickets",
+  "info": {
+    "displayName": "ticket",
+    "icon": "bulletList",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "horaires": {
+      "type": "datetime"
+    },
+    "quantity": {
+      "type": "integer",
+      "min": 0
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "description": {
+      "type": "text"
+    },
+    "uuid": {
+      "type": "customField",
+      "customField": "plugin::field-uuid.uuid"
+    }
+  }
+}
