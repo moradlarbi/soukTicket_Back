@@ -8,23 +8,43 @@ const { createCoreController } = require('@strapi/strapi').factories;
 
 module.exports = createCoreController('api::event.event', {
     async create(ctx) {
-        try {
+        const res = await strapi.db.transaction(async ({ trx, rollback, commit, onCommit, onRollback }) => {
+            try {
+                const user = ctx.state.user;
+                //let body = JSON.parse(ctx.request.body.data);
+                let body = ctx.request.body.data;
+                const tickets = body.tickets;
+                delete ctx.request.body.data.tickets
+                delete body.tickets
+                body = { ...body, user: user.id }
+                ctx.request.body = { ...ctx.request.body, data: body }
+                
+                const response = await super.create(ctx);
+                console.log(response);
+                
+                for (let i = 0; i < tickets.length; i++) {
+                    for (let j = 0; j < tickets[i].numberOfTickets; j++) {
+                        await strapi.db.query('api::ticket.ticket').create({data: {
+                            name: tickets[i].name,
+                            price: tickets[i].price,
+                            startDate: tickets[i].startDate,
+                            endDate: tickets[i].endDate,
+                            slug: tickets[i].slug,
+                            event: response.data.id,
+                            publishedAt: new Date()
+                        }});
+                    }
+                }
 
-            const user = ctx.state.user;
-            let body = JSON.parse(ctx.request.body.data);
-            //console.log(JSON.parse(ctx.request.body.data));
-            console.log(body);
-            body = { ...body, user: user.id }
-            console.log(body);
-
-            ctx.request.body = { ...ctx.request.body, data: JSON.stringify(body) }
-            console.log("body", ctx.request.body)
-            const response = await super.create(ctx);
-            return response;
-        } catch (error) {
-            console.error(error);
-            throw new Error("Failed to create the resource.", error);
-        }
+                await commit()
+                return response;
+            } catch (error) {
+                console.error(error);
+                await rollback()
+                throw new Error("Failed to create the resource.", error);
+            }
+        });
+        return res;
     },
     async find(ctx) {
 

@@ -18,9 +18,6 @@
     "slug": {
       "type": "uid"
     },
-    "quantity": {
-      "type": "integer"
-    },
     "price": {
       "type": "decimal"
     },
@@ -29,6 +26,26 @@
       "relation": "manyToOne",
       "target": "api::event.event",
       "inversedBy": "tickets"
+    },
+    "startDate": {
+      "type": "datetime"
+    },
+    "endDate": {
+      "type": "datetime"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "in sale",
+        "purchased",
+        "expired"
+      ],
+      "default": "in sale"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

@@ -19,7 +19,7 @@
       "type": "datetime"
     },
     "endDate": {
-      "type": "date"
+      "type": "datetime"
     },
     "location": {
       "type": "string"
