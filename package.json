@@ -16,6 +16,7 @@
     "@strapi/provider-upload-cloudinary": "^4.9.0",
     "@strapi/strapi": "4.11.1",
     "mysql": "2.18.1",
+    "qrcode": "^1.5.3",
     "strapi-auto-uuid": "^0.0.8",
     "strapi-plugin-country-select": "^1.0.2",
     "strapi-plugin-entity-relationship-chart": "^4.1.0"

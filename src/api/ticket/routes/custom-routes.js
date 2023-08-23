@@ -1,8 +1,8 @@
 module.exports = {
     routes: [
       {
-        method: "POST",
-        path: "/acheter-ticket",
+        method: "PUT",
+        path: "/acheter-ticket/:id",
         handler: "ticket.acheter",
       },
     ],
