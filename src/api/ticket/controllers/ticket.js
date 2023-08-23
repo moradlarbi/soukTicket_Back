@@ -6,6 +6,7 @@
 
 const { createCoreController } = require('@strapi/strapi').factories;
 const qrcode = require('qrcode');
+const jwt = require('jsonwebtoken');
 
 module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
     async acheter(ctx) {
@@ -15,7 +16,7 @@ module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
       console.log(user);
       
       // Construct the data you want to encode in the QR code
-      const qrData = `${user.id}${secret}${ctx.params.id}`;
+      const qrData = jwt.sign({ userId: user.id, ticketId: ctx.params.id }, secret);
       console.log(qrData);
       const response = await strapi.db.query("api::ticket.ticket").update({
         where: {
@@ -53,10 +54,15 @@ module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
       return response
     },
     async check(ctx) {
-      const [userId, paramsId] = ctx.params.qrcode.split(process.env.QR_SECRET);
+      const decoded = jwt.verify(ctx.params.qrcode, process.env.QR_SECRET);
+      console.log(decoded);
+
+      // Extract userId and paramsId from the decoded payload
+      const { userId, ticketId } = decoded;
+
       const response = await strapi.db.query("api::ticket.ticket").update({
         where: {
-          id: paramsId,
+          id: ticketId,
           user: userId,
           state: 'purchased'
         },
