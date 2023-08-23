@@ -52,4 +52,18 @@ module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
 
       return response
     },
+    async check(ctx) {
+      const [userId, paramsId] = ctx.params.qrcode.split(process.env.QR_SECRET);
+      const response = await strapi.db.query("api::ticket.ticket").update({
+        where: {
+          id: paramsId,
+          user: userId,
+          state: 'purchased'
+        },
+        data: {
+          state: 'expired'
+        }
+      });
+      return response
+    }
   }));
