@@ -11,16 +11,17 @@ module.exports = createCoreController('api::event.event', {
         const res = await strapi.db.transaction(async ({ trx, rollback, commit, onCommit, onRollback }) => {
             try {
                 const user = ctx.state.user;
-                //let body = JSON.parse(ctx.request.body.data);
-                let body = ctx.request.body.data;
+                let body = JSON.parse(ctx.request.body.data);
+                //let body = ctx.request.body.data;
+                
                 const tickets = body.tickets;
                 delete ctx.request.body.data.tickets
                 delete body.tickets
                 body = { ...body, user: user.id }
-                ctx.request.body = { ...ctx.request.body, data: body }
+                ctx.request.body = { ...ctx.request.body, data: JSON.stringify(body) }
                 
                 const response = await super.create(ctx);
-                console.log(response);
+                
                 
                 for (let i = 0; i < tickets.length; i++) {
                     for (let j = 0; j < tickets[i].numberOfTickets; j++) {

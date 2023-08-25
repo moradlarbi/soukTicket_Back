@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mysql:8.0.15
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+       MYSQL_ROOT_PASSWORD: 'password'
+       MYSQL_DATABASE: 'test'
+       MYSQL_USER: 'strapuser'
+       MYSQL_PASSWORD: 'password'
+    ports:
+      - 3308:3306
+    # Change this to your local path
+    volumes:
+      - ~/Database/ORM_Test:/var/lib/mysql
