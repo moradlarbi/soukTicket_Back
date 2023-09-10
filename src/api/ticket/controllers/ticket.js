@@ -19,9 +19,19 @@ module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
         const ticketIds = []; // To store the IDs of processed tickets
   
         for (const criteria of requestBody) {
+          console.log(criteria.event);
           // Find tickets that match the specified criteria
-          const tickets = await strapi.db.query("api::ticket.ticket").findMany({
-            where: {
+          const tickets = await strapi.entityService.findMany("api::ticket.ticket", {
+            filters: {
+              $and: [
+                  {
+                    event: {
+                      id: {
+                        $eq: criteria.event
+                      }
+                    }
+                  }
+              ],
               name: criteria.name,
               price: criteria.price,
               state: 'in sale',
@@ -30,11 +40,15 @@ module.exports = createCoreController('api::ticket.ticket', ({ strapi }) => ({
           });
   
           for (const ticket of tickets) {
+            console.log(ticket);
             const qrData = jwt.sign({ userId: user.id, ticketId: ticket.id }, secret);
   
             // Update the ticket and set the user as the purchaser
             const response = await strapi.db.query("api::ticket.ticket").update({
-              where: { id: ticket.id },
+              where: { 
+                id: ticket.id,
+                state: 'in sale'
+              },
               data: {
                 user: user.id,
                 state: 'purchased',
