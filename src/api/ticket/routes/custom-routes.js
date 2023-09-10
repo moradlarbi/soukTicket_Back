@@ -2,7 +2,7 @@ module.exports = {
     routes: [
       {
         method: "PUT",
-        path: "/acheter-ticket/:id",
+        path: "/acheter-ticket",
         handler: "ticket.acheter",
       },
       {
